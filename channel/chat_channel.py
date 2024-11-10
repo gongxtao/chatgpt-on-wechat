@@ -219,6 +219,11 @@ class ChatChannel(Channel):
                     else:
                         return
             elif context.type == ContextType.IMAGE:  # 图片消息，当前仅做下载保存到本地的逻辑
+                cmsg = context["msg"]
+                cmsg.prepare()
+                object_name = "/wechat/image/{}/{}/{}".format(cmsg.to_user_id, cmsg.msg_id, context.content)
+                from lib import oss
+                oss.put_object(object_name, context.content)
                 memory.USER_IMAGE_CACHE[context["session_id"]] = {
                     "path": context.content,
                     "msg": context.get("msg")
