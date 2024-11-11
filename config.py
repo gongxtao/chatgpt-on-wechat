@@ -16,6 +16,9 @@ available_setting = {
     "minio_url": "http://localhost:9001/api/v1/service-account-credentials",
     "minio_access_key": "rT8g4ZDuezFBjoeHA79E",
     "minio_secret_key": "Abv4SYYgrCLGV5faldnrQXsJPeITIQUOrpFuAV5Q",
+    # finai 配置
+    "finai_base_url": "http://localhost:2024",
+    "use_finai": False, # 是否使用finai
     # openai api配置
     "open_ai_api_key": "",  # openai api key
     # openai apibase，当use_azure_chatgpt为true时，需要设置对应的api base

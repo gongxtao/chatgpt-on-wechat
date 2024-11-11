@@ -39,6 +39,9 @@ def create_bot(bot_type):
     elif bot_type == const.LINKAI:
         from bot.linkai.link_ai_bot import LinkAIBot
         return LinkAIBot()
+    elif bot_type == const.FINAI:
+        from bot.finai.fin_ai_bot import FinAIBot
+        return FinAIBot()
 
     elif bot_type == const.CLAUDEAI:
         from bot.claude.claude_ai_bot import ClaudeAIBot

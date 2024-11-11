@@ -219,15 +219,25 @@ class ChatChannel(Channel):
                     else:
                         return
             elif context.type == ContextType.IMAGE:  # 图片消息，当前仅做下载保存到本地的逻辑
+                # download image
                 cmsg = context["msg"]
                 cmsg.prepare()
-                object_name = "/wechat/image/{}/{}/{}".format(cmsg.to_user_id, cmsg.msg_id, context.content)
+
+                file_path = context.content
+                object_name = "/wechat/image/{}/{}/{}".format(cmsg.to_user_id, cmsg.msg_id, file_path)
                 from lib import oss
-                oss.put_object(object_name, context.content)
+                oss.put_object(object_name, file_path)
                 memory.USER_IMAGE_CACHE[context["session_id"]] = {
-                    "path": context.content,
+                    "path": file_path,
                     "msg": context.get("msg")
                 }
+                reply = super().build_reply_content(context.content, context)
+                # 删除临时文件
+                try:
+                    os.remove(file_path)
+                except Exception as e:
+                    # logger.warning("[chat_channel]delete temp file error: " + str(e))
+                    pass
             elif context.type == ContextType.SHARING:  # 分享信息，当前无默认逻辑
                 pass
             elif context.type == ContextType.FUNCTION or context.type == ContextType.FILE:  # 文件消息及函数调用等，当前无默认逻辑
