@@ -1,5 +1,6 @@
 import base64
 import io
+import os
 import time
 
 import requests
@@ -27,8 +28,8 @@ class FinAIBot(Bot):
         if context.type == ContextType.TEXT:
             return self._chat(query, context)
         elif context.type == ContextType.IMAGE:
-            context.content = self._read_image(context.content)
-            context.type = ContextType.TEXT
+            # 修改为 minio 存储的object_name
+            context.content = self._get_image_path(context)
             return self._chat(context.content, context)
         else:
             reply = Reply(ReplyType.ERROR, "Bot不支持处理{}类型的消息".format(context.type))
@@ -52,9 +53,6 @@ class FinAIBot(Bot):
         try:
             session_id = context["session_id"]
             query_text = query
-            if context.type == ContextType.IMAGE:
-                # 消息类型是图片，内容保存base64
-                query_text = self._read_image(context.content)
             body = {
                 "sessionId": session_id,
                 "senderName": "",
@@ -135,6 +133,27 @@ class FinAIBot(Bot):
             time.sleep(2)
             logger.warn(f"[FINAI] do retry, times={retry_count}")
             return self._chat(query, context, retry_count + 1)
+
+    def _get_image_path(self, context):
+        """
+        返回图片在minio里的路径
+        """
+        # download image
+        cmsg = context["msg"]
+        cmsg.prepare()
+
+        file_path = context.content
+        object_name = "/receive/image/{}/{}/{}".format(cmsg.from_user_id, cmsg.msg_id, file_path)
+        from lib import oss
+        oss.put_object(object_name, file_path)
+
+        # 删除临时文件
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            # logger.warning("[FINAI]delete temp file error: " + str(e))
+            pass
+        return object_name
 
     def _read_image(self, path):
         """
