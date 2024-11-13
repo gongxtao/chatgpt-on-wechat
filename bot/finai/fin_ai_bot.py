@@ -55,6 +55,7 @@ class FinAIBot(Bot):
             query_text = query
             body = {
                 "sessionId": session_id,
+                "msgId": "",
                 "senderName": "",
                 "group": False,
                 "groupName": "",
@@ -63,6 +64,7 @@ class FinAIBot(Bot):
                 "channelType": conf().get("channel_type", "wx")
             }
             if context.kwargs.get("msg"):
+                body["msgId"] = context.kwargs.get("msg").msg_id
                 body["sessionId"] = context.kwargs.get("msg").from_user_id
                 if context.kwargs.get("msg").is_group:
                     body["group"] = True
