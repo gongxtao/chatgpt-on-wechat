@@ -14,8 +14,8 @@ available_setting = {
     # minio 配置
     "minio_bucket_name": "wechat-secretary",
     "minio_url": "http://localhost:9001/api/v1/service-account-credentials",
-    "minio_access_key": "rT8g4ZDuezFBjoeHA79E",
-    "minio_secret_key": "Abv4SYYgrCLGV5faldnrQXsJPeITIQUOrpFuAV5Q",
+    "minio_access_key": "",
+    "minio_secret_key": "",
     # finai 配置
     "finai_base_url": "http://localhost:2024",
     "use_finai": False, # 是否使用finai
